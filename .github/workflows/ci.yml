@@ -32,8 +32,9 @@ jobs:
         run: mv frankenphp /usr/local/bin/
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
+      - run: frankenphp --help
       - name: Run
-        run: frankenphp php-server -r public/
+        run: frankenphp php-server --worker public/index.php
       - name: Wait
         run: sleep 4
       - name: Run PHPUnit
