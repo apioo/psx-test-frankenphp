@@ -1,0 +1,16 @@
+{
+  "require": {
+    "php": ">=8.0",
+    "psx/framework": "^7.0",
+    "psx/engine-frankenphp": "^0.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PSX\\Framework\\App\\": "vendor/psx/framework/app/"
+    }
+  }
+}
