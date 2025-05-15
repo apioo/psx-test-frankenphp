@@ -22,7 +22,7 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 
 $container = require_once(__DIR__ . '/../container.php');
 
-$engine      = new \PSX\Engine\FrankenPHP\Engine();
+$engine      = new \PSX\Engine\FrankenPHP\Engine($container->getParameter('psx_url'));
 $dispatcher  = $container->get(\PSX\Engine\DispatchInterface::class);
 $environment = new \PSX\Framework\Environment\Environment($dispatcher, $engine);
 
