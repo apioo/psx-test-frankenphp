@@ -33,7 +33,7 @@ jobs:
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Run
-        run: frankenphp php-server --worker public/index.php --listen 0.0.0.0:8080 &
+        run: frankenphp php-server --worker public/index.php --listen 0.0.0.0:8443 &
       - name: Wait
         run: sleep 4
       - name: Run PHPUnit
