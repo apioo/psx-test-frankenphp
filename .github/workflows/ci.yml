@@ -6,6 +6,8 @@ jobs:
   phpunit:
     name: "PHPUnit (PHP: ${{ matrix.php-versions }})"
     runs-on: ubuntu-latest
+    env:
+      APP_CONNECTION: "pdo-sqlite:////${{ github.workspace }}/cache/app.db"
     strategy:
       matrix:
         php-versions:
@@ -42,10 +44,8 @@ jobs:
           echo "FrankenPHP failed to start! Dumping log:"
           cat frankenphp.log
           exit 1
-      - name: Setup SQLite Database File
-        run: touch ${{ github.workspace }}/cache/app.db
       - name: Run PHPUnit
-        run: SEND=external APP_CONNECTION="pdo-sqlite:////${{ github.workspace }}/cache/app.db" vendor/bin/phpunit
+        run: SEND=external vendor/bin/phpunit
       - name: Print Logs on Failure
         if: failure()
         run: cat frankenphp.log
