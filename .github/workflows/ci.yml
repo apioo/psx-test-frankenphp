@@ -27,8 +27,15 @@ jobs:
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Run
-        run: frankenphp run --config Caddyfile &
-      - name: Wait
-        run: sleep 4
+        run: frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
+      - name: Wait for FrankenPHP
+        run: |
+          until curl --output /dev/null --silent --head --fail http://127.0.0.1:8080; do
+            printf '.'
+            sleep 1
+          done
       - name: Run PHPUnit
         run: SEND=external vendor/bin/phpunit
+      - name: Print Logs on Failure
+        if: failure()
+        run: cat frankenphp.log
