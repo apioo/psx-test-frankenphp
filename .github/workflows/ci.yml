@@ -27,11 +27,8 @@ jobs:
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Run
-        run: CADDY_GLOBAL_OPTIONS="auto_https off" frankenphp php-server --worker public/index.php --listen :8080 -v > frankenphp.log 2>&1 &
+        run: frankenphp run --config Caddyfile &
       - name: Wait
         run: sleep 4
       - name: Run PHPUnit
         run: SEND=external vendor/bin/phpunit
-      - name: Print Server Logs on Failure
-        if: failure()
-        run: cat frankenphp.log

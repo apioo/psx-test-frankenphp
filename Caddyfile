@@ -1,0 +1,14 @@
+{
+    auto_https off
+    debug
+}
+
+:8080 {
+    root * public
+
+    try_files {path} /index.php
+
+    php_server {
+        worker public/index.php
+    }
+}
