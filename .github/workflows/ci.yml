@@ -24,16 +24,20 @@ jobs:
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
 
-      - name: Setup SQLite Cache Directory
+      - name: Prepare SQLite Cache Directory
         run: |
           mkdir -p ${{ github.workspace }}/cache
           touch ${{ github.workspace }}/cache/app.db
           chmod -R 777 ${{ github.workspace }}/cache
 
+      - name: Execute Bootstrap / Database Setup
+        run: php tests/bootstrap.php
+
       - name: Start FrankenPHP via Docker
         run: |
           docker run -d \
             --name frankenphp-server \
+            --user root \
             --net=host \
             -v ${{ github.workspace }}:/app \
             -w /app \
