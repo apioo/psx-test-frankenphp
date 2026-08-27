@@ -17,7 +17,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mysqli, pdo_mysql
       - name: Setup MySQL
         run: |
           sudo /etc/init.d/mysql start
