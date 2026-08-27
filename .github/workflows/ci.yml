@@ -28,8 +28,6 @@ jobs:
           mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test1234';" -uroot -proot
       - name: Setup FrankenPHP
         run: curl https://frankenphp.dev/install.sh | sh
-      - name: Move FrankenPHP
-        run: mv frankenphp /usr/local/bin/
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Run
