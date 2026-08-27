@@ -24,14 +24,16 @@ jobs:
           sudo /etc/init.d/mysql start
           mysql -e "CREATE DATABASE psx;" -uroot -proot
           mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test1234';" -uroot -proot
-      - name: Install FrankenPHP Binary with Extensions
-        run: |
-          curl -sSF "https://frankenphp.dev/install.sh" | FRANKENPHP_CONFIG="--with-pdo --with-pdo-sqlite" sh
-          sudo mv frankenphp /usr/local/bin/
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
-      - name: Start FrankenPHP
-        run: frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
+      - name: Start FrankenPHP via Docker
+        run: |
+          docker run -d \
+            --net=host \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            -e APP_CONNECTION="pdo-sqlite:////app/cache/app.db" \
+            dunglas/frankenphp frankenphp run --config Caddyfile
       - name: Wait for FrankenPHP
         run: |
           for i in {1..10}; do
