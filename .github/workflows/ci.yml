@@ -15,25 +15,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-      - name: Setup MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e "CREATE DATABASE psx;" -uroot -proot
-          mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test1234';" -uroot -proot
+
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
+
+      - name: Setup SQLite Cache Directory
+        run: |
+          mkdir -p ${{ github.workspace }}/cache
+          touch ${{ github.workspace }}/cache/app.db
+          chmod -R 777 ${{ github.workspace }}/cache
+
       - name: Start FrankenPHP via Docker
         run: |
           docker run -d \
+            --name frankenphp-server \
             --net=host \
             -v ${{ github.workspace }}:/app \
             -w /app \
             -e APP_CONNECTION="pdo-sqlite:////app/cache/app.db" \
             dunglas/frankenphp frankenphp run --config Caddyfile
+
       - name: Wait for FrankenPHP
         run: |
           for i in {1..10}; do
@@ -46,10 +52,12 @@ jobs:
           done
           
           echo "FrankenPHP failed to start! Dumping log:"
-          cat frankenphp.log
+          docker logs frankenphp-server
           exit 1
+
       - name: Run PHPUnit
         run: SEND=external vendor/bin/phpunit
+
       - name: Print Logs on Failure
         if: failure()
-        run: cat frankenphp.log
+        run: docker logs frankenphp-server
