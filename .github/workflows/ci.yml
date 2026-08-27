@@ -45,7 +45,7 @@ jobs:
       - name: Setup SQLite Database File
         run: touch ${{ github.workspace }}/cache/app.db
       - name: Run PHPUnit
-        run: SEND=external APP_CONNECTION="sqlite:////${{ github.workspace }}/cache/app.db" vendor/bin/phpunit
+        run: SEND=external APP_CONNECTION="pdo-sqlite:////${{ github.workspace }}/cache/app.db" vendor/bin/phpunit
       - name: Print Logs on Failure
         if: failure()
         run: cat frankenphp.log
