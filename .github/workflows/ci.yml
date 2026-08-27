@@ -30,11 +30,8 @@ jobs:
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Start FrankenPHP
         run: |
-          EXT_DIR=$(php -r "echo ini_get('extension_dir');")
-          frankenphp run --config Caddyfile \
-            -d "extension_dir=$EXT_DIR" \
-            -d "extension=pdo.so" \
-            -d "extension=pdo_sqlite.so" > frankenphp.log 2>&1 &
+          PHP_INI=$(php -r "echo php_ini_loaded_file();")
+          frankenphp run --config Caddyfile --php-ini "$PHP_INI" > frankenphp.log 2>&1 &
       - name: Wait for FrankenPHP
         run: |
           for i in {1..10}; do
