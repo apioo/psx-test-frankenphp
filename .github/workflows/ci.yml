@@ -17,9 +17,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          coverage: none
-          tools: pecl
-          extensions: swoole
       - name: Setup MySQL
         run: |
           sudo /etc/init.d/mysql start
