@@ -1,14 +1,12 @@
 {
     auto_https off
+    admin off
 }
 
 :8080 {
     root * public
-
-    # Fallback non-file requests to index.php
     try_files {path} /index.php
 
-    # Correct worker mode directive inside php_server
     php_server {
         worker public/index.php
     }
