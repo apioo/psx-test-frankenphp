@@ -42,7 +42,7 @@ jobs:
             --net=host \
             -v ${{ github.workspace }}:/app \
             -w /app \
-            dunglas/frankenphp frankenphp run --config Caddyfile
+            dunglas/frankenphp sh -c "install-php-extensions pdo_mysql && frankenphp run --config Caddyfile"
 
       - name: Wait for FrankenPHP
         run: |
