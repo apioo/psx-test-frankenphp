@@ -6,8 +6,15 @@ jobs:
   phpunit:
     name: "PHPUnit (PHP: ${{ matrix.php-versions }})"
     runs-on: ubuntu-latest
-    env:
-      APP_CONNECTION: "pdo-sqlite:////${{ github.workspace }}/cache/app.db"
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test1234
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
       matrix:
         php-versions:
@@ -20,28 +27,21 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
+          extensions: pdo_mysql
 
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
 
-      - name: Prepare SQLite Cache Directory
-        run: |
-          mkdir -p ${{ github.workspace }}/cache
-          touch ${{ github.workspace }}/cache/app.db
-          chmod -R 777 ${{ github.workspace }}/cache
-
-      - name: Execute Bootstrap / Database Setup
+      - name: Execute Bootstrap / Setup Database
         run: php tests/bootstrap.php
 
       - name: Start FrankenPHP via Docker
         run: |
           docker run -d \
             --name frankenphp-server \
-            --user root \
             --net=host \
             -v ${{ github.workspace }}:/app \
             -w /app \
-            -e APP_CONNECTION="pdo-sqlite:////app/cache/app.db" \
             dunglas/frankenphp frankenphp run --config Caddyfile
 
       - name: Wait for FrankenPHP
