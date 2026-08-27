@@ -1,14 +1,19 @@
 {
     auto_https off
-    debug
 }
 
 :8080 {
     root * public
+    encode zstd gzip
 
+    # Rewrite all non-file requests to index.php
     try_files {path} /index.php
 
-    php_server {
+    # Execute via FrankenPHP worker mode
+    frankenphp {
         worker public/index.php
     }
+
+    # Enable standard PHP file execution fallback
+    php_server
 }

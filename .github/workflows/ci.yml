@@ -30,10 +30,18 @@ jobs:
         run: frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
       - name: Wait for FrankenPHP
         run: |
-          until curl --output /dev/null --silent --head --fail http://127.0.0.1:8080; do
-            printf '.'
+          for i in {1..10}; do
+            if curl -s http://127.0.0.1:8080 > /dev/null; then
+              echo "FrankenPHP is up!"
+              exit 0
+            fi
+            echo "Waiting for port 8080... ($i/10)"
             sleep 1
           done
+          
+          echo "FrankenPHP failed to start! Dumping log:"
+          cat frankenphp.log
+          exit 1
       - name: Run PHPUnit
         run: SEND=external vendor/bin/phpunit
       - name: Print Logs on Failure
