@@ -4,16 +4,12 @@
 
 :8080 {
     root * public
-    encode zstd gzip
 
-    # Rewrite all non-file requests to index.php
+    # Fallback non-file requests to index.php
     try_files {path} /index.php
 
-    # Execute via FrankenPHP worker mode
-    frankenphp {
+    # Correct worker mode directive inside php_server
+    php_server {
         worker public/index.php
     }
-
-    # Enable standard PHP file execution fallback
-    php_server
 }
