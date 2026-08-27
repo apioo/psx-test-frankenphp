@@ -30,8 +30,10 @@ jobs:
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Start FrankenPHP
         run: |
-          PHP_INI=$(php -r "echo php_ini_loaded_file();")
-          frankenphp run --config Caddyfile --php-ini "$PHP_INI" > frankenphp.log 2>&1 &
+          SYS_INI=$(php -r "echo php_ini_loaded_file();")
+          SCAN_DIR=$(php -r "echo ini_get('scan_dir');")
+          
+          PHPRC="$SYS_INI" PHP_INI_SCAN_DIR="$SCAN_DIR" frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
       - name: Wait for FrankenPHP
         run: |
           for i in {1..10}; do
