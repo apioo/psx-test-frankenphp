@@ -24,16 +24,14 @@ jobs:
           sudo /etc/init.d/mysql start
           mysql -e "CREATE DATABASE psx;" -uroot -proot
           mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test1234';" -uroot -proot
-      - name: Setup FrankenPHP
-        run: curl https://frankenphp.dev/install.sh | sh
+      - name: Install FrankenPHP Binary with Extensions
+        run: |
+          curl -sSF "https://frankenphp.dev/install.sh" | FRANKENPHP_CONFIG="--with-pdo --with-pdo-sqlite" sh
+          sudo mv frankenphp /usr/local/bin/
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Start FrankenPHP
-        run: |
-          SYS_INI=$(php -r "echo php_ini_loaded_file();")
-          SCAN_DIR=$(php -r "echo ini_get('scan_dir');")
-          
-          PHPRC="$SYS_INI" PHP_INI_SCAN_DIR="$SCAN_DIR" frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
+        run: frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
       - name: Wait for FrankenPHP
         run: |
           for i in {1..10}; do
