@@ -9,6 +9,5 @@
 
     php_server {
         worker public/index.php
-        env APP_CONNECTION "pdo-sqlite:////home/runner/work/psx-test-frankenphp/psx-test-frankenphp/cache/app.db"
     }
 }
