@@ -28,8 +28,13 @@ jobs:
         run: curl https://frankenphp.dev/install.sh | sh
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
-      - name: Run
-        run: frankenphp run --config Caddyfile > frankenphp.log 2>&1 &
+      - name: Start FrankenPHP
+        run: |
+          EXT_DIR=$(php -r "echo ini_get('extension_dir');")
+          frankenphp run --config Caddyfile \
+            -d "extension_dir=$EXT_DIR" \
+            -d "extension=pdo.so" \
+            -d "extension=pdo_sqlite.so" > frankenphp.log 2>&1 &
       - name: Wait for FrankenPHP
         run: |
           for i in {1..10}; do
